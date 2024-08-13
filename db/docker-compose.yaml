@@ -1,0 +1,35 @@
+services:
+  pie-tunes-neo4j-prod:
+    image: neo4j:4.4-enterprise
+    container_name: "pie-tunes-neo4j-prod"
+    environment:
+      - NEO4J_AUTH=neo4j/secret123
+      - NEO4J_ACCEPT_LICENSE_AGREEMENT=yes
+    networks:
+      - pie-tunes-network-prod
+    ports:
+      - "7474:7474" # HTTP
+      - "7687:7687" # Bolt
+    volumes:
+      - ./export/neo4j/data:/data
+      - ./export/neo4j/var/lib/neo4j/conf:/var/lib/neo4j/conf
+      - ./export/neo4j/var/lib/neo4j/import:/var/lib/neo4j/import
+      - ./export/neo4j/plugins:/plugins
+  pie-tunes-minio-prod:
+    image: minio/minio
+    container_name: "pie-tunes-minio-prod"
+    networks:
+      - pie-tunes-network-prod
+    ports:
+      - 9000:9000
+      - 9001:9001
+    environment:
+      - MINIO_ACCESS_KEY=minio1234567890
+      - MINIO_SECRET_KEY=minio1234567890
+    volumes:
+      - ./storage:/data
+    command: server --console-address ":9001" /data
+
+networks:
+  pie-tunes-network-prod:
+    name: "pie-tunes-network-prod"
