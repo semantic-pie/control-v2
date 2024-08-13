@@ -11,7 +11,7 @@ Usage:
 
 Commands:
     install      Install necessary services
-    clean        Remove all knowledge base folders
+    run          Run all services
     down         Stop all services
     help         Show usage information
 
@@ -79,11 +79,7 @@ function clone_git_repo() {
 # COMMAND SWITCHER
 
 case $1 in
-
-# clone components
 install)
-    # clone knowledge bases
-
         if [ $2 = '--dev' ]; then
             prepare_component git@github.com:semantic-pie/pie-tunes-domain domain
             prepare_component git@github.com:semantic-pie/pie-tunes-streaming streaming
@@ -97,7 +93,6 @@ install)
             prepare_component https://github.com/semantic-pie/pie-tunes-snoopy snoopy
             prepare_component https://github.com/semantic-pie/pie-tunes-recommendation-service recommendations
         fi
-        # prepare_interface
     ;;
 
 build)
@@ -109,7 +104,6 @@ build)
     docker compose -f ./ui/docker/docker-compose.yaml build
     ;;
 
-# run ostis
 run)
     shift 1;
     while getopts "dh" opt; do
@@ -131,14 +125,12 @@ run)
     fi
     ;;
 
-# stop ostis
 stop)
     shift 1;
      docker compose -f ./db/docker-compose.yaml -f ./ui/docker/docker-compose.yaml -f ./domain/docker/docker-compose.yaml -f ./streaming/docker/docker-compose.yaml -f ./snoopy/docker/docker-compose.yaml -f ./recommendations/docker/docker-compose.yaml down 
     ;;
 
 
-# restart ostis
 restart)
     shift 1;
     docker compose -f ./db/docker-compose.yaml -f ./ui/docker/docker-compose.yaml -f ./domain/docker/docker-compose.yaml -f ./streaming/docker/docker-compose.yaml -f ./snoopy/docker/docker-compose.yaml -f ./recommendations/docker/docker-compose.yaml down 
@@ -146,7 +138,6 @@ restart)
     echo "[RESTARTED]"
     ;;
 
-# show help
 --help)
     usage
     ;;
