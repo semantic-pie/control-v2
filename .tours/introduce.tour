@@ -1,0 +1,116 @@
+{
+  "$schema": "https://aka.ms/codetour-schema",
+  "title": "Introduce",
+  "steps": [
+    {
+      "file": "ui/src/components/SignUpComponent/SignUp/index.tsx",
+      "description": "## Компонента регистрации (pie-tunes-ui-vite)\n\nЧистая компонента регистрации без какой-либо логики.",
+      "line": 21
+    },
+    {
+      "file": "ui/src/components/SignUpComponent/SignUpWrapper.tsx",
+      "description": "## HoC для компоненты регистрации\n\nПочти все компоненты на фронте чистые, а логика вынесена в HoC компоненты. В данном случае, для SignUp.",
+      "line": 11
+    },
+    {
+      "file": "ui/src/components/SignUpComponent/SignUpWrapper.tsx",
+      "description": "Запрос из HoC компоненты на авторизацию при помощи самописного клиента `pieApiClient` (/pie-tunes-ui-vite/src/api/client.ts)\n```ts\n// внутрянка\nauthSignUp: async (body) =>\n    fetch(api.urlForAuthSignUp(), postWithBody({ body })) // urlForAuthSignUp() -> '/api/v1/auth/signup'\n        .then(responseToPieApiResponse),\n```",
+      "line": 48
+    },
+    {
+      "file": "domain/src/main/java/com/apipietunes/clients/controllers/AuthController.java",
+      "description": "## Signup/Login (domain сервис)\n\nАвторизацией пока занимается только domain сервис, остальные сервисы пропускают запросы без проверок. В данном сервисе реализован простой способ авторизации посредством JWT-токена.",
+      "line": 19
+    },
+    {
+      "file": "domain/src/main/java/com/apipietunes/clients/controllers/AuthController.java",
+      "description": "Также почти во всех сервисах используется WebFlux",
+      "line": 26
+    },
+    {
+      "file": "domain/src/main/java/com/apipietunes/clients/controllers/AuthController.java",
+      "description": "Пользователь сохраняется как в H2 для нужд авторизации, так и в Neo4j для последующего \"соединения\" с базой музыки, жанров и т.д",
+      "line": 28
+    },
+    {
+      "file": "ui/src/components/SignUpComponent/SignUpWrapper.tsx",
+      "description": "## После регистрации (ui сервис)\n\nПосле удачной регистрации внедряем куку с токеном и направляем пользователя выбрать его любимые жанры",
+      "line": 53
+    },
+    {
+      "file": "ui/src/components/PreferredGenresComponent/PreferredGenres/index.tsx",
+      "description": "Компонента выбора любимых жанров. \nПока хард-код, в идеале сделать на основе самых популярных",
+      "line": 13
+    },
+    {
+      "file": "ui/src/components/SignUpComponent/SignUpWrapper.tsx",
+      "description": "После чего отправляем выбранные жанры на сохранение:\n- `putPreferredGenres(data)`\n\nделаем запрос на генерирацию плейлистов по выбаранным жанрам:\n- `pieApiClient.generatePlaylist()` \n\nа пользователя отправляем на главную страницу:\n- `nav({ to: '/library/songs' })`",
+      "line": 78
+    },
+    {
+      "file": "ui/src/router/library.tsx",
+      "description": "Здесь происходит роутинг раздела `/library` и его подразделов:\n- `/songs` - список \"лайкнутых\" треков (изначально пуст)  // domain сервис\n- `/artists` - списко \"лайкнутых\" артистов, но сейчас отображает всех имеющихся впринципе  //  domain сервис\n- `/albums` - список \"лайкнутых\" альбомов (изначально пуст)  // domain сервис\n- `/made-for-yoy` - генерируемые плейлисты, пока не починим будет пусто (jwt баг)  // recommendations сервис\n- `/upload` - загрузка треков  // domain-uploader\n\nДалее:\n1. `library/uploader`\n2. раздел поиска `/search`\n2. `library/songs`\n3. `library/albums`\n4. `library/made-for-you`",
+      "line": 19
+    },
+    {
+      "file": "ui/src/components/TrackUploaderComponent/TrackUploader/index.tsx",
+      "description": "Компонента загрузчика треков",
+      "line": 21
+    },
+    {
+      "file": "ui/src/components/TrackUploaderComponent/TrackUploaderWrapper.tsx",
+      "description": "Опять же тривиальный HoC с простой логикой загрузки треков в цикле как MultipartFile.",
+      "line": 13
+    },
+    {
+      "file": "ui/src/components/TrackUploaderComponent/TrackUploaderWrapper.tsx",
+      "description": "pieApiClient.uploadMp3(formData):\n```ts\nuploadMp3: async (body) =>\n    fetch(\n      api.urlForSingleUpload(), // urlForSingleUpload() -> '/api/track-loader/upload-one'\n      postWithBody({ body, auth: true, disableContentType: true })\n    )\n      .then(responseToPieApiResponse)\n```",
+      "line": 31
+    },
+    {
+      "file": "domain/src/main/java/com/apipietunes/clients/controllers/TrackLoaderController.java",
+      "description": "## Загрузчик треков (domain сервис)\n\nТеоретически можно загружать батчи из нескольких треков, но тогда возникает проблема с параллельной загрузкой треков в Neo4j и последующими логическими ошибками в структуре данных.\nПоэтому, также есть апи для загрузки треков по-одному.",
+      "line": 22
+    },
+    {
+      "file": "domain/src/main/java/com/apipietunes/clients/controllers/TrackLoaderController.java",
+      "description": "Сохраняем трек и отдаём дто-шку на фронт, для обновления статуса трека.\n\nДалее подробнее про сохранение",
+      "line": 45
+    },
+    {
+      "file": "domain/src/main/java/com/apipietunes/clients/services/impl/TrackLoaderServiceImpl.java",
+      "description": "Что происходит при сохранении:\n- парсим `id3` теги `mp3` файла, предварительно сохранив его временно на сервере (костыль)\n- пытаемя найти трек по его названию и названию его банды. Если существует - ругаемся и бросаем ошибку\n- сохраняем в `neo4j` метаинформацию о треке, в `minio` раздельно сам файл трека и обложку.\n- возращаем сохранённую в neo4j сущность (метаинформацию)",
+      "line": 70
+    },
+    {
+      "file": "domain/src/main/java/com/apipietunes/clients/controllers/TrackLoaderController.java",
+      "description": "Назад к контроллеру сохранения треков. \n```java\nMusicTrackDto trackDto = domainEntityMapper.outerTrack(savedTrack)\n```\n\nИз-за потребности в разных представлениях сущностей на фронте используется мапер (см. далее)",
+      "line": 43
+    },
+    {
+      "file": "domain/src/main/java/com/apipietunes/clients/models/mappers/DomainEntityMapper.java",
+      "description": "Собственно мапер",
+      "line": 17
+    },
+    {
+      "file": "ui/src/components/Search/SearchPage.tsx",
+      "description": "## Поиск (ui-vite сервис)\n\nПосле добавления трека, его нужно как-то найти, поэтому есть глобальный поиск треков/артистов/альбомов в системе.",
+      "line": 15
+    },
+    {
+      "file": "ui/src/components/Search/SearchPage.tsx",
+      "description": "При поиске отрабатывет:\n\n```ts\nasync ({ query, controller }) => pieApiClient.searchByTitle({ query, controller })\n```\n\nДелается запрос по api: `/api/v1/search` в domain сервис (см. Далее)\n\n",
+      "line": 28
+    },
+    {
+      "file": "domain/src/main/java/com/apipietunes/clients/controllers/SearchController.java",
+      "description": "## Контроллер поиска (domain сервис)\n\nПо запросу c параметрос `q={text}` возрашает по 4 сущности трека, альбома и артистов",
+      "line": 28
+    },
+    {
+      "file": "ui/src/components/Search/SearchPage.tsx",
+      "description": "## Компонента поиска (ui-vite сервис)\n\nПосле того, как domain вернёт найденный сущности, треки и альбомы можно добавить в \"свои списки\" нажатием на `+` или открыть альбом/артиста",
+      "line": 47
+    }
+  ]
+}
