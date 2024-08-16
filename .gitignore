@@ -4,6 +4,7 @@
 **/__pycache__
 **/postgres-data
 
+.env
 .idea
 .vscode
 

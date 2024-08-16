@@ -1,5 +1,9 @@
 #!/bin/bash
 
+set -a            
+source .env
+set +a
+
 WORKDIR=$(pwd)
 export GIT_TERMINAL_PROMPT=0
 
@@ -81,19 +85,19 @@ function clone_git_repo() {
 
 case $1 in
 install)
-        if [ $2 = '--dev' ]; then
-            prepare_component git@github.com:semantic-pie/pie-tunes-domain domain
-            prepare_component git@github.com:semantic-pie/pie-tunes-streaming streaming
-            prepare_component git@github.com:semantic-pie/pie-tunes-ui-vite ui
-            prepare_component git@github.com:semantic-pie/pie-tunes-snoopy snoopy
-            prepare_component git@github.com:semantic-pie/pie-tunes-recommendation-service recommendations
-        else
-            prepare_component https://github.com/semantic-pie/pie-tunes-domain domain
-            prepare_component https://github.com/semantic-pie/pie-tunes-streaming streaming
-            prepare_component https://github.com/semantic-pie/pie-tunes-ui-vite ui
-            prepare_component https://github.com/semantic-pie/pie-tunes-snoopy snoopy
-            prepare_component https://github.com/semantic-pie/pie-tunes-recommendation-service recommendations
-        fi
+    if [ "$2" == "--dev" ]; then
+        prepare_component git@github.com:semantic-pie/pie-tunes-domain domain
+        prepare_component git@github.com:semantic-pie/pie-tunes-streaming streaming
+        prepare_component git@github.com:semantic-pie/pie-tunes-ui-vite ui
+        prepare_component git@github.com:semantic-pie/pie-tunes-snoopy snoopy
+        prepare_component git@github.com:semantic-pie/pie-tunes-recommendation-service recommendations
+    else
+        prepare_component https://github.com/semantic-pie/pie-tunes-domain domain
+        prepare_component https://github.com/semantic-pie/pie-tunes-streaming streaming
+        prepare_component https://github.com/semantic-pie/pie-tunes-ui-vite ui
+        prepare_component https://github.com/semantic-pie/pie-tunes-snoopy snoopy
+        prepare_component https://github.com/semantic-pie/pie-tunes-recommendation-service recommendations
+    fi
     ;;
 
 build)
@@ -120,9 +124,9 @@ run)
 
     if [[ $DETACHED ]]; then
         echo "STARTING..."
-        JWT_TOKEN_SECRET_KEY=9c1fff39-6863-4447-bd55-5eed0d6f2ecb9c1fff39-6863-4447-bd55-5eed0d6f2ecb docker compose -f ./db/docker-compose.yaml -f ./ui/docker-compose.yaml -f ./domain/docker/docker-compose.yaml -f ./streaming/docker/docker-compose.yaml -f ./snoopy/docker/docker-compose.yaml -f ./recommendations/docker/docker-compose.yaml up -d
+        docker compose -f ./db/docker-compose.yaml -f ./ui/docker-compose.yaml -f ./domain/docker/docker-compose.yaml -f ./streaming/docker/docker-compose.yaml -f ./snoopy/docker/docker-compose.yaml -f ./recommendations/docker/docker-compose.yaml up -d
     else 
-        JWT_TOKEN_SECRET_KEY=9c1fff39-6863-4447-bd55-5eed0d6f2ecb9c1fff39-6863-4447-bd55-5eed0d6f2ecb docker compose -f ./db/docker-compose.yaml -f ./ui/docker/docker-compose.yaml -f ./domain/docker/docker-compose.yaml -f ./streaming/docker/docker-compose.yaml -f ./snoopy/docker/docker-compose.yaml -f ./recommendations/docker/docker-compose.yaml up
+        docker compose -f ./db/docker-compose.yaml -f ./ui/docker/docker-compose.yaml -f ./domain/docker/docker-compose.yaml -f ./streaming/docker/docker-compose.yaml -f ./snoopy/docker/docker-compose.yaml -f ./recommendations/docker/docker-compose.yaml up
     fi
     ;;
 
@@ -135,7 +139,7 @@ stop)
 restart)
     shift 1;
     docker compose -f ./db/docker-compose.yaml -f ./ui/docker/docker-compose.yaml -f ./domain/docker/docker-compose.yaml -f ./streaming/docker/docker-compose.yaml -f ./snoopy/docker/docker-compose.yaml -f ./recommendations/docker/docker-compose.yaml down 
-     docker compose -f ./db/docker-compose.yaml -f ./ui/docker/docker-compose.yaml -f ./domain/docker/docker-compose.yaml -f ./streaming/docker/docker-compose.yaml -f ./snoopy/docker/docker-compose.yaml -f ./recommendations/docker/docker-compose.yaml up -d
+    docker compose -f ./db/docker-compose.yaml -f ./ui/docker/docker-compose.yaml -f ./domain/docker/docker-compose.yaml -f ./streaming/docker/docker-compose.yaml -f ./snoopy/docker/docker-compose.yaml -f ./recommendations/docker/docker-compose.yaml up -d
     echo "[RESTARTED]"
     ;;
 
