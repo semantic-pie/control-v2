@@ -40,3 +40,5 @@ To start, run:
 # and
 ./control.sh run
 ```
+
+UI runs on `http://localhost:3000`.
