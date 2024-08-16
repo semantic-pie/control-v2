@@ -17,7 +17,7 @@ Commands:
     install      Install necessary services
     build        Build all services
     run          Run all services
-    down         Stop all services
+    stop         Stop all services
     help         Show usage information
 
 
