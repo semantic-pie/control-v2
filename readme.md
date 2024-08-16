@@ -11,6 +11,13 @@ This script is used to manage the setup and execution of the project services. I
 
 ## Usage
 
+Clone repository:
+
+```bash
+git clone git@github.com:semantic-pie/control-v2
+````
+
+Create `.env` file:
 
 ```bash
 cp .env.example .env
