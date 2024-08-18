@@ -1,4 +1,4 @@
-# Project Launcher Script
+# Control script
 
 This script is used to manage the setup and execution of the project services. It provides commands to install dependencies, build and run services.
 
