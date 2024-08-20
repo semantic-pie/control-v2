@@ -14,11 +14,11 @@ Usage:
     $0 [command] [options]
 
 Commands:
-    install      Install necessary services
-    build        Build all services
-    run          Run all services
-    stop         Stop all services
-    help         Show usage information
+    install             Install necessary services
+    build   [service]   Build all services
+    run     [d]         Run all services
+    stop                Stop all services
+    help                Show usage information
 
 
 USAGE
@@ -41,7 +41,7 @@ USAGE
 
 
 # ==============================================
-# COMPONENTS PREPARE (SC-machine SC-web ProblemSover)
+# COMPONENTS PREPARE
 
 # clone / pull any component
 function prepare_component() {
@@ -102,11 +102,16 @@ install)
 
 build)
     shift 1;
-    ./domain/docker/build-image.sh
-    ./recommendations/docker/build-image.sh
-    ./streaming/docker/build-image.sh
-    ./snoopy/docker/build-image.sh
-    docker compose -f ./ui/docker/docker-compose.yaml build
+    if [ -z "$1" ]; then
+        ./domain/docker/build-image.sh
+        ./recommendations/docker/build-image.sh
+        ./streaming/docker/build-image.sh
+        ./snoopy/docker/build-image.sh
+        docker compose -f ./ui/docker/docker-compose.yaml build   
+    else
+        echo "[${1}] Start building..."
+        eval "./${1}/docker/build-image.sh" && echo "[${1}]"
+    fi
     ;;
 
 run)
@@ -132,7 +137,8 @@ run)
 
 stop)
     shift 1;
-     docker compose -f ./db/docker-compose.yaml -f ./ui/docker/docker-compose.yaml -f ./domain/docker/docker-compose.yaml -f ./streaming/docker/docker-compose.yaml -f ./snoopy/docker/docker-compose.yaml -f ./recommendations/docker/docker-compose.yaml down 
+    docker compose -f ./db/docker-compose.yaml -f ./ui/docker/docker-compose.yaml -f ./domain/docker/docker-compose.yaml -f ./streaming/docker/docker-compose.yaml -f ./snoopy/docker/docker-compose.yaml -f ./recommendations/docker/docker-compose.yaml down 
+    echo "[DELETED]"
     ;;
 
 
