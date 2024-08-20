@@ -122,9 +122,9 @@ run)
     done
     shift $((OPTIND - 1))
 
-    if [[ $DETACHED ]]; then
+    if $DETACHED ; then
         echo "STARTING..."
-        docker compose -f ./db/docker-compose.yaml -f ./ui/docker-compose.yaml -f ./domain/docker/docker-compose.yaml -f ./streaming/docker/docker-compose.yaml -f ./snoopy/docker/docker-compose.yaml -f ./recommendations/docker/docker-compose.yaml up -d
+        docker compose -f ./db/docker-compose.yaml -f ./ui/docker/docker-compose.yaml -f ./domain/docker/docker-compose.yaml -f ./streaming/docker/docker-compose.yaml -f ./snoopy/docker/docker-compose.yaml -f ./recommendations/docker/docker-compose.yaml up -d
     else 
         docker compose -f ./db/docker-compose.yaml -f ./ui/docker/docker-compose.yaml -f ./domain/docker/docker-compose.yaml -f ./streaming/docker/docker-compose.yaml -f ./snoopy/docker/docker-compose.yaml -f ./recommendations/docker/docker-compose.yaml up
     fi
