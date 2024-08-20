@@ -116,18 +116,15 @@ build)
 
 run)
     shift 1;
-    while getopts "dh" opt; do
-        case $opt in
+    case $1 in
         d) DETACHED=1 ;;
         h) run_usage  ;;
         \?) echo "Invalid option -$OPTARG" && run_usage
             exit 1
              ;;
-        esac
-    done
-    shift $((OPTIND - 1))
+    esac
 
-    if $DETACHED ; then
+    if ! $DETACHED ; then
         echo "STARTING..."
         docker compose -f ./db/docker-compose.yaml -f ./ui/docker/docker-compose.yaml -f ./domain/docker/docker-compose.yaml -f ./streaming/docker/docker-compose.yaml -f ./snoopy/docker/docker-compose.yaml -f ./recommendations/docker/docker-compose.yaml up -d
     else 
